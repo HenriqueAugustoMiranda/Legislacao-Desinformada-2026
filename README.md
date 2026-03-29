@@ -6,7 +6,7 @@ Este projeto analisa a desinformação relacionada a leis brasileiras durante o 
 
 ## Objetivo
 
-1. **Coletar dados de vídeos e comentários do YouTube** sobre leis brasileiras recentes e polêmicas, priorizando conteúdos relevantes e recentes.  
+1. **Coletar dados de vídeos e comentários do YouTube** e de outras redes sociais, sobre leis brasileiras recentes e polêmicas, priorizando conteúdos relevantes e recentes.  
 2. **Extrair transcrições e comentários**, filtrando desinformação, exageros e falácias, incluindo expressões de grupos como redpill e incel.  
 3. **Analisar padrões de desinformação**, identificando termos recorrentes, narrativas enganosas e possíveis outliers.  
 4. **Gerar uma base de dados estruturada** para estudos acadêmicos, visualizações e relatórios sobre o impacto da desinformação legal em períodos eleitorais.  
