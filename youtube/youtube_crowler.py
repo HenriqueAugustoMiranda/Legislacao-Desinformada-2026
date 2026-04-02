@@ -75,6 +75,7 @@ def obter_detalhes_videos(ids_videos):
 
         for item in resposta["items"]:
             dados = {
+                "fonte": "YouTube",
                 "id_video": item["id"],
                 "titulo": item["snippet"]["title"],
                 "descricao": item["snippet"]["description"],
