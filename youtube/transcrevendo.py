@@ -2,52 +2,9 @@ from youtube_transcript_api import YouTubeTranscriptApi, IpBlocked, RequestBlock
 import time
 import pandas as pd
 import random
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.chrome.service import Service
-from webdriver_manager.chrome import ChromeDriverManager
+
 
 api = YouTubeTranscriptApi()
-
-
-
-def criar_driver():
-    options = webdriver.ChromeOptions()
-    options.add_argument("--headless")  
-    options.add_argument("--disable-blink-features=AutomationControlled")
-    options.add_argument("--log-level=3")
-    return webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
-
-
-
-def transcrever2(id_video, driver):
-    VIDEO_URL = "https://www.youtube.com/watch?v=" + id_video
-
-    driver.get(VIDEO_URL)
-    time.sleep(4)
-
-    driver.execute_script("window.scrollTo(0, 800);")
-    time.sleep(2)
-
-    try:
-        btn = driver.find_element(By.XPATH, '//button[contains(@aria-label, "trans")]')
-        driver.execute_script("arguments[0].click();", btn)
-        time.sleep(3)
-    except:
-        print("Não achou botão de transcrição")
-        return None
-
-    segments = driver.find_elements(By.CSS_SELECTOR, "transcript-segment-view-model")
-
-    texto = ""
-    for seg in segments:
-        try:
-            texto += seg.find_element(By.CSS_SELECTOR, "span").text + " "
-        except:
-            pass
-
-    return texto.strip() if texto else None
-
 
 
 def transcrever_video(id_video):
@@ -77,7 +34,6 @@ def adicionar_transcricoes(videos, max_vds=15):
     print("\nIniciando coleta de transcrições...\n")
 
     total = len(videos)
-    driver = criar_driver()  
 
     for i, video in enumerate(videos):
 
@@ -90,22 +46,19 @@ def adicionar_transcricoes(videos, max_vds=15):
         print("Tentando obter transcrição via API...")
 
         try:
+
             transcricao, ipBlock = transcrever_video(video["id_video"])
 
-            
             if ipBlock:
-                break
-                print("IP bloqueado → usando Selenium...\n")
-                transcricao = transcrever2(video["id_video"], driver)
-
+                print("\n\nip Block!\n\n")
+                return videos, 0
             
             elif transcricao is None:
-                break
-                print("Sem transcript via API → tentando Selenium...\n")
-                transcricao = transcrever2(video["id_video"], driver)
+                print("\n\nSEM TRANSCRICAO\n\n")
+                return videos, 0
 
             if not transcricao:
-                print("Falhou geral (API + Selenium)\n")
+                print("Falhou!\n")
                 continue
 
             video["transcricao"] = transcricao
@@ -122,8 +75,6 @@ def adicionar_transcricoes(videos, max_vds=15):
         max_vds -= 1
         if max_vds <= 0:
             break
-
-    driver.quit()  
 
     print("Execução finalizada\n")
     return videos, total - (i+1)
