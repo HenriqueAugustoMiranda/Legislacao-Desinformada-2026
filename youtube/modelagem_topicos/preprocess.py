@@ -1,8 +1,14 @@
 import pandas as pd
 import unicodedata
 import spacy
+from spacy.lang.en.stop_words import STOP_WORDS as EN_STOP_WORDS
 
 nlp = spacy.load("pt_core_news_sm")
+todas_stopwords = set(nlp.Defaults.stop_words)
+todas_stopwords.update(EN_STOP_WORDS)
+extras = {'pra', 'tá', 'pro', 'ai', 'aqui', 'lá', 'vai', 'vou', 'queria', 'acho', 'ne', 'entao'}
+todas_stopwords.update(extras)
+
 df = pd.read_csv("preprocess_transcript.csv")
 df_coment = pd.read_csv("comentarios_tratados.csv")
 
@@ -14,7 +20,10 @@ def remover_acentos(texto):
         if unicodedata.category(char) != 'Mn'
     )
 
-stopwords = set(remover_acentos(w) for w in nlp.Defaults.stop_words)
+stopwords = set()
+for w in todas_stopwords:
+    palavra_limpa = remover_acentos(w.lower())
+    stopwords.add(palavra_limpa)
 
 def preprocess_transcript(df):
 
@@ -108,5 +117,5 @@ def ordenar_por_media(df):
     df.to_csv("preprocess_transcript.csv", index=False)
     return df
 
-
+preprocess_transcript(df)
 preprocess_comentarios(df_coment)
