@@ -70,15 +70,17 @@ def preprocess_descricao(df):
 
 def preprocess_comentarios(df):
 
+    df = df.drop_duplicates()
+
     df['texto'] = df['texto'].fillna("")
 
     df['texto_clean'] = df['texto'].str.lower()
     df['texto_clean'] = df['texto_clean'].apply(remover_acentos)
 
-    df['texto_clean'] = df['texto_clean'].str.replace(r"\[.*?\]", "", regex=True)
-    df['texto_clean'] = df['texto_clean'].str.replace(r"http\S+|www\S+", "", regex=True)
-    df['texto_clean'] = df['texto_clean'].str.replace(r"\d+", "", regex=True)
-    df['texto_clean'] = df['texto_clean'].str.replace(r"[^a-z\s]", "", regex=True)
+    df['texto_clean'] = df['texto_clean'].str.replace(r"\[.*?\]", " ", regex=True)
+    df['texto_clean'] = df['texto_clean'].str.replace(r"http\S+|www\S+", " ", regex=True)
+    df['texto_clean'] = df['texto_clean'].str.replace(r"\d+", " ", regex=True)
+    df['texto_clean'] = df['texto_clean'].str.replace(r"[^a-z\s]", " ", regex=True)
     df['texto_clean'] = df['texto_clean'].str.replace(r"\s+", " ", regex=True).str.strip()
 
     df['comentario_tokens'] = df['texto_clean'].apply(lambda x: x.split())
@@ -87,6 +89,7 @@ def preprocess_comentarios(df):
     )
 
     df['texto_clean'] = df['comentario_tokens'].apply(lambda x: " ".join(x))
+    df = df.sort_values(by=["id_video", "likes"], ascending=[True, False])
 
     df.to_csv("comentarios_tratados.csv", index=False)
 
@@ -104,3 +107,6 @@ def ordenar_por_media(df):
 
     df.to_csv("preprocess_transcript.csv", index=False)
     return df
+
+
+preprocess_comentarios(df_coment)
