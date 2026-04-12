@@ -27,15 +27,15 @@ for w in todas_stopwords:
 
 def preprocess_transcript(df):
 
-    df['transcricao'] = df['transcricao'].fillna("")
+    df['transcricao'] = df['transcricao'].fillna(" ")
 
     df['transcricao_clean'] = df['transcricao'].str.lower()
 
     df['transcricao_clean'] = df['transcricao_clean'].apply(remover_acentos)
 
-    df['transcricao_clean'] = df['transcricao_clean'].str.replace(r"\[.*?\]", "", regex=True)
-    df['transcricao_clean'] = df['transcricao_clean'].str.replace(r"\d+", "", regex=True)
-    df['transcricao_clean'] = df['transcricao_clean'].str.replace(r"[^a-z\s]", "", regex=True)
+    df['transcricao_clean'] = df['transcricao_clean'].str.replace(r"\[.*?\]", " ", regex=True)
+    df['transcricao_clean'] = df['transcricao_clean'].str.replace(r"\d+", " ", regex=True)
+    df['transcricao_clean'] = df['transcricao_clean'].str.replace(r"[^a-z\s]", " ", regex=True)
     df['transcricao_clean'] = df['transcricao_clean'].str.replace(r"\s+", " ", regex=True).str.strip()
 
     df['tokens'] = df['transcricao_clean'].apply(lambda x: x.split())
@@ -53,16 +53,16 @@ def preprocess_transcript(df):
 
 def preprocess_descricao(df):
 
-    df['descricao'] = df['descricao'].fillna("")
+    df['descricao'] = df['descricao'].fillna(" ")
 
     df['descricao'] = df['descricao'].str.lower()
 
     df['descricao'] = df['descricao'].apply(remover_acentos)
 
-    df['descricao'] = df['descricao'].str.replace(r"\[.*?\]", "", regex=True)
-    df['descricao'] = df['descricao'].str.replace(r"\d+", "", regex=True)
-    df['descricao'] = df['descricao'].str.replace(r"[^a-z\s]", "", regex=True)
-    df['descricao'] = df['descricao'].str.replace(r"http\S+|www\S+", "", regex=True)
+    df['descricao'] = df['descricao'].str.replace(r"\[.*?\]", " ", regex=True)
+    df['descricao'] = df['descricao'].str.replace(r"\d+", " ", regex=True)
+    df['descricao'] = df['descricao'].str.replace(r"[^a-z\s]", " ", regex=True)
+    df['descricao'] = df['descricao'].str.replace(r"http\S+|www\S+", " ", regex=True)
     df['descricao'] = df['descricao'].str.replace(r"\s+", " ", regex=True).str.strip()
 
     df['descricao_tokens'] = df['descricao'].apply(lambda x: x.split())
@@ -118,4 +118,5 @@ def ordenar_por_media(df):
     return df
 
 preprocess_transcript(df)
+preprocess_descricao(df)
 preprocess_comentarios(df_coment)
