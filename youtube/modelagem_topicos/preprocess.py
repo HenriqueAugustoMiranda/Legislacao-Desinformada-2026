@@ -7,7 +7,7 @@ from langdetect import detect
 nlp = spacy.load("pt_core_news_sm")
 todas_stopwords = set(nlp.Defaults.stop_words)
 # todas_stopwords.update(EN_STOP_WORDS)
-extras = {'pra', 'tá', 'pro', 'ai', 'aqui', 'lá', 'vai', 'vou', 'queria', 'acho', 'ne', 'entao', 'tinha'}
+extras = {'pra', 'tá', 'pro', 'ai', 'aqui', 'lá', 'vai', 'vou', 'queria', 'acho', 'ne', 'entao', 'tinha', 'gente', 'cara'}
 todas_stopwords.update(extras)
 
 df = pd.read_csv("preprocess_transcript.csv")
