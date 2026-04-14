@@ -2,15 +2,23 @@ import pandas as pd
 import unicodedata
 import spacy
 from spacy.lang.en.stop_words import STOP_WORDS as EN_STOP_WORDS
+from langdetect import detect
 
 nlp = spacy.load("pt_core_news_sm")
 todas_stopwords = set(nlp.Defaults.stop_words)
-todas_stopwords.update(EN_STOP_WORDS)
+# todas_stopwords.update(EN_STOP_WORDS)
 extras = {'pra', 'tá', 'pro', 'ai', 'aqui', 'lá', 'vai', 'vou', 'queria', 'acho', 'ne', 'entao'}
 todas_stopwords.update(extras)
 
 df = pd.read_csv("preprocess_transcript.csv")
 df_coment = pd.read_csv("comentarios_tratados.csv")
+
+
+def is_pt(txt):
+    try:
+        return detect(txt) == 'pt'
+    except:
+        return False
 
 
 def remover_acentos(texto):
@@ -26,6 +34,10 @@ for w in todas_stopwords:
     stopwords.add(palavra_limpa)
 
 def preprocess_transcript(df):
+    
+    df['is_pt'] = df['transcricao'].apply(is_pt)
+    df = df[df['transcricao'].apply(is_pt)]
+    df = df.drop(columns=['is_pt'])
 
     df['transcricao'] = df['transcricao'].fillna(" ")
 
@@ -45,8 +57,6 @@ def preprocess_transcript(df):
     )
 
     df['transcricao_clean'] = df['tokens'].apply(lambda x: " ".join(x))
-
-    df.to_csv("preprocess_transcript.csv", index=False)
 
     return df
 
@@ -78,6 +88,13 @@ def preprocess_descricao(df):
     return df
 
 def preprocess_comentarios(df):
+
+    df['is_pt'] = df['texto_clean'].apply(is_pt)
+    df = df[
+        (df['is_pt']) &
+        (df['texto_clean'].str.len() > 10)
+    ]
+    df = df.drop(columns=['is_pt'])
 
     df = df.drop_duplicates()
 
@@ -117,6 +134,6 @@ def ordenar_por_media(df):
     df.to_csv("preprocess_transcript.csv", index=False)
     return df
 
-preprocess_transcript(df)
-preprocess_descricao(df)
+
+preprocess_descricao(preprocess_transcript(df))
 preprocess_comentarios(df_coment)
