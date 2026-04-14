@@ -7,7 +7,7 @@ from langdetect import detect
 nlp = spacy.load("pt_core_news_sm")
 todas_stopwords = set(nlp.Defaults.stop_words)
 # todas_stopwords.update(EN_STOP_WORDS)
-extras = {'pra', 'tá', 'pro', 'ai', 'aqui', 'lá', 'vai', 'vou', 'queria', 'acho', 'ne', 'entao'}
+extras = {'pra', 'tá', 'pro', 'ai', 'aqui', 'lá', 'vai', 'vou', 'queria', 'acho', 'ne', 'entao', 'tinha'}
 todas_stopwords.update(extras)
 
 df = pd.read_csv("preprocess_transcript.csv")
@@ -35,9 +35,9 @@ for w in todas_stopwords:
 
 def preprocess_transcript(df):
     
-    df['is_pt'] = df['transcricao'].apply(is_pt)
-    df = df[df['transcricao'].apply(is_pt)]
-    df = df.drop(columns=['is_pt'])
+    # df['is_pt'] = df['transcricao'].apply(is_pt)
+    # df = df[df['transcricao'].apply(is_pt)]
+    # df = df.drop(columns=['is_pt'])
 
     df['transcricao'] = df['transcricao'].fillna(" ")
 
@@ -89,12 +89,12 @@ def preprocess_descricao(df):
 
 def preprocess_comentarios(df):
 
-    df['is_pt'] = df['texto_clean'].apply(is_pt)
-    df = df[
-        (df['is_pt']) &
-        (df['texto_clean'].str.len() > 10)
-    ]
-    df = df.drop(columns=['is_pt'])
+    # df['is_pt'] = df['texto_clean'].apply(is_pt)
+    # df = df[
+    #     (df['is_pt']) &
+    #     (df['texto_clean'].str.len() > 10)
+    # ]
+    # df = df.drop(columns=['is_pt'])
 
     df = df.drop_duplicates()
 
